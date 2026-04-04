@@ -53,6 +53,7 @@ export default function LoginPage() {
   const [step,         setStep]         = useState('main');  
   const [selectedRole, setSelectedRole] = useState(null);
   const [phone,        setPhone]        = useState('');
+  const [name,         setName]         = useState('');
   const [otp,          setOtp]          = useState(['','','','','','']);
   const [loading,      setLoading]      = useState(false);
   const [otpError,     setOtpError]     = useState('');
@@ -60,14 +61,14 @@ export default function LoginPage() {
  
   const handleSend = async () => {
     if (!selectedRole) { addNotification('Please select your role first 👆'); return; }
+    if (!name.trim()) { addNotification('Please enter your full name 👆'); return; }
     if (phone.length < 10) { addNotification('Enter a valid 10-digit number'); return; }
     setLoading(true);
     try {
-      await sendOTP(phone, selectedRole, selectedRole);
+      await sendOTP(phone, selectedRole, name.trim());
       setStep('otp');
       addNotification('OTP sent! Use 123456 for demo 🌸');
     } catch (err) {
-
       console.warn('Backend not reachable — demo mode:', err.message);
       setStep('otp');
       addNotification('Demo mode: Use 123456 🌸');
@@ -113,7 +114,7 @@ export default function LoginPage() {
           setLoading(false);
           return;
         }
-        login({ name: ROLE_NAMES[selectedRole], phone, role: selectedRole }, selectedRole);
+        login({ name: name.trim() || ROLE_NAMES[selectedRole], phone, role: selectedRole }, selectedRole);
         navigate(ROLE_ROUTES[selectedRole], { replace: true });
       } else {
         setOtpError(err.message || 'Verification failed. Try again.');
@@ -259,7 +260,7 @@ export default function LoginPage() {
 
   
   
-  const canSend = selectedRole && phone.length >= 10;
+  const canSend = selectedRole && phone.length >= 10 && name.trim().length >= 2;
   return (
     <div style={{
       minHeight: '100vh',
@@ -394,7 +395,18 @@ export default function LoginPage() {
           We'll send a code to verify your identity
         </p>
 
-       
+        {/* Name input */}
+        <input
+          type="text"
+          placeholder="Your full name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          style={{ ...inputBase, marginBottom: 14 }}
+          onFocus={e => { e.target.style.borderColor = '#E8799A'; }}
+          onBlur={e  => { e.target.style.borderColor = 'rgba(200,66,109,0.16)'; }}
+        />
+
+       {/* Phone input */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 6,

@@ -105,7 +105,7 @@ export default function PatientProfile() {
           fontSize:'1.65rem', color:'white', fontWeight:700,
           marginBottom:3, position:'relative', zIndex:1,
         }}>
-          {name} Sharma
+          {name}
         </h2>
         <p style={{ color:'rgba(255,255,255,0.72)', fontSize:'0.8rem', position:'relative', zIndex:1 }}>
           Chandanpur · SHEALTH Member 🌸

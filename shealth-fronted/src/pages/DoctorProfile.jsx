@@ -23,7 +23,8 @@ function Toggle({ on, color = '#C8426D' }) {
 }
 
 export default function DoctorProfile() {
-  const { logout, addNotification } = useApp();
+  const { logout, addNotification, user } = useApp();
+  const name = user?.name || 'Doctor';
   const navigate   = useNavigate();
   const [activeTab,   setActiveTab]   = useState('profile');
   const [available,   setAvailable]   = useState(true);
@@ -138,7 +139,7 @@ export default function DoctorProfile() {
           fontFamily:'Cormorant Garamond,serif',
           fontSize:'1.65rem', color:'white', fontWeight:700, marginBottom:3, position:'relative', zIndex:1,
         }}>
-          Dr. Meera Sharma
+          Dr. {name}
         </h2>
         <p style={{ color:'rgba(255,255,255,0.76)', fontSize:'0.80rem', position:'relative', zIndex:1 }}>
           Gynecologist &amp; Obstetrician · SHEALTH Network

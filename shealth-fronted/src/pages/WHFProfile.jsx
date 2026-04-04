@@ -129,7 +129,7 @@ export default function WHFProfile() {
             fontFamily:'Cormorant Garamond,serif',
             fontSize:'1.65rem', color:'white', fontWeight:700, marginBottom:3,
           }}>
-            {name} Devi
+            {name} 
           </h2>
           <p style={{ color:'rgba(255,255,255,0.72)', fontSize:'0.82rem' }}>
             WHF Facilitator · Rampur Block
