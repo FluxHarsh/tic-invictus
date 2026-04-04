@@ -12,7 +12,7 @@ from config import GEMINI_API_KEY
 import io, base64
 
 audio_model = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
+    model="gemini-2.5-flash",
     google_api_key=GEMINI_API_KEY,
     temperature=0,
 )
@@ -41,21 +41,30 @@ async def transcribe_audio(base64_audio: str, mime_type: str, language: str = "h
     try:
         prompt = TRANSCRIBE_PROMPT_HI if language == "hi" else TRANSCRIBE_PROMPT
 
-        # Create message with audio content for Langchain
-        message = HumanMessage(
-            content=[
-                {"type": "text", "text": prompt},
-                {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:{mime_type};base64,{base64_audio}"
-                    }
-                }
+        response = await audio_model.ainvoke(
+            [
+                HumanMessage(
+                    content=[
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "media",
+                            "mime_type": mime_type,
+                            "data": base64_audio,
+                        },
+                    ]
+                )
             ]
         )
 
-        response = audio_model.invoke([message])
-        transcribed_text = response.content.strip()
+        content = response.content
+        if isinstance(content, str):
+            transcribed_text = content.strip()
+        elif isinstance(content, list):
+            transcribed_text = "\n".join(
+                part.get("text", "") for part in content if isinstance(part, dict)
+            ).strip()
+        else:
+            transcribed_text = str(content).strip()
 
         return {
             "success": True,
