@@ -221,7 +221,7 @@ export default function LoginPage() {
               cursor: filled < 6 || loading ? 'not-allowed' : 'pointer',
               boxShadow: filled >= 6 ? '0 4px 20px rgba(91,77,142,0.4)' : 'none',
               transition: 'all 0.22s ease', marginBottom: 14,
-            }}
+            }} 
           >
             {loading ? 'Verifying…' : 'Verify & Continue'}
           </button>

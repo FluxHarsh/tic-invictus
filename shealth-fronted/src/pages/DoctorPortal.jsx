@@ -264,7 +264,7 @@ export default function DoctorPortal() {
                     onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   >
                     📋 Read AI Report
-                  </button>
+                  </button> 
                 </div>
               </div>
             );

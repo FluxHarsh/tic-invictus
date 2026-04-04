@@ -287,7 +287,7 @@ export default function EarningsPage() {
               cursor: path ? 'pointer' : 'default',
               fontFamily:'Nunito,sans-serif', fontSize:'0.67rem', fontWeight:700,
             }}
-          >
+          > 
             <span style={{ fontSize:'1.1rem' }}>{em}</span>
             {lbl}
           </button>

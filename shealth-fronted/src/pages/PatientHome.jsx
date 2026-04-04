@@ -20,9 +20,9 @@ const TODAY_IDX = 1; // Saturday highlighted
 export function BottomNav({ active, onSelect, navigate, role }) {
   const patientTabs = [
     { id: 'home',    emoji: '🏠', label: 'Home',    path: '/patient'          },
-    { id: 'health',  emoji: '📊', label: 'Health',  path: '/patient/results'  },
-    { id: 'learn',   emoji: '📚', label: 'Learn',   path: '/patient/learn'    },
-    { id: 'profile', emoji: '👤', label: 'Profile', path: '/patient/profile'  },
+    { id: 'health',  emoji: '📊', label: 'Health',  path: null                },
+    { id: 'learn',   emoji: '📚', label: 'Learn',   path: null                },
+    { id: 'profile', emoji: '👤', label: 'Profile', path: null                },
   ];
   const whfTabs = [
     { id: 'home',     emoji: '🏠', label: 'Home',     path: '/whf'          },
@@ -46,13 +46,16 @@ export function BottomNav({ active, onSelect, navigate, role }) {
       {tabs.map(t => (
         <button
           key={t.id}
-          onClick={() => { onSelect(t.id); navigate(t.path); }}
+          onClick={() => {
+            onSelect(t.id);
+            if (t.path) navigate(t.path);
+          }}
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
             padding: '8px 14px', borderRadius: 14, border: 'none',
             background: active === t.id ? 'rgba(200,66,109,0.10)' : 'transparent',
             color:      active === t.id ? '#C8426D' : '#9A7A88',
-            cursor: 'pointer', transition: 'all 0.2s ease',
+            cursor: t.path ? 'pointer' : 'default', transition: 'all 0.2s ease',
             fontFamily: 'Nunito, sans-serif', fontSize: '0.68rem', fontWeight: 700,
           }}
         >
@@ -279,12 +282,12 @@ export default function PatientHome() {
           <QuickCard
             icon="💊" title="Health Tips" subtitle="3 tips today"
             color="#E8F8F2" accent="#4CAF85"
-            onClick={() => navigate('/patient/learn')}
+            onClick={() => {}}
           />
           <QuickCard
             icon="🧠" title="Mental Wellness" subtitle="Check in"
             color="#FEF0F5" accent="#C8426D"
-            onClick={() => navigate('/patient/learn')}
+            onClick={() => {}}
           />
         </div>
 

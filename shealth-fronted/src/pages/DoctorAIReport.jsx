@@ -215,7 +215,7 @@ export default function DoctorAIReport() {
             Order Diagnostics
           </button>
         </div>
-      </div>
+      </div> 
 
       <style>{`
         @keyframes fadeUp {

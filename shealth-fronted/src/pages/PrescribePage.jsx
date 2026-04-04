@@ -371,12 +371,12 @@ function Section({ title, children }) {
       {children}
     </div>
   );
-}
+} 
 
 // ── Reusable label + input wrapper ───────────────────────────
 function Field({ label, children }) {
-  return (
-    <div>
+  return ( 
+    <div> 
       <label style={{
         display:'block', fontSize:'0.72rem', fontWeight:700,
         color:'#9A7A88', marginBottom:5,

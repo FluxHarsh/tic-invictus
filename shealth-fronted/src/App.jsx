@@ -22,6 +22,15 @@ import DoctorAIReport  from './pages/DoctorAIReport';
 import DoctorVideoCall from './pages/DoctorVideoCall';
 import PrescribePage   from './pages/PrescribePage';
 
+import LabResultsPage  from './pages/LabResultPage';
+import PatientProfile  from './pages/PatientProfile';
+import LearnPage       from './pages/LearnPage';
+import CommunityPage   from './pages/CommunityPage';
+import DoctorProfile   from './pages/DoctorProfile';
+
+
+
+
 
 function Guard({ children, role: need }) {
   const { role } = useApp();
@@ -85,12 +94,18 @@ function Shell() {
 
       
         
-        <Route path="/patient/results"     element={<Guard role="patient"><ComingSoon label="Lab Results" /></Guard>} />
-        <Route path="/patient/learn"       element={<Guard role="patient"><ComingSoon label="Learn" /></Guard>} />
-        <Route path="/patient/community"   element={<Guard role="patient"><ComingSoon label="Community" /></Guard>} />
-        <Route path="/patient/profile"     element={<Guard role="patient"><ComingSoon label="Profile" /></Guard>} />
+       <Route path="/patient/results"   element={<Guard role="patient"><LabResultsPage /></Guard>} />
+        <Route path="/patient/profile"   element={<Guard role="patient"><PatientProfile /></Guard>} />       
+        <Route path="/patient/learn"     element={<Guard role="patient"><LearnPage /></Guard>} />       
+        <Route path="/patient/community" element={<Guard role="patient"><CommunityPage /></Guard>} />
 
       
+
+
+
+
+
+
         <Route path="/whf"          element={<Guard role="whf"><WHFDashboard /></Guard>} />
         <Route path="/whf/vitals"   element={<Guard role="whf"><VitalsPage /></Guard>} />
         
@@ -107,8 +122,7 @@ function Shell() {
         <Route path="/doctor/prescribe"
           element={<Guard role="doctor"><PrescribePage /></Guard>} />
        
-        <Route path="/doctor/profile"
-          element={<Guard role="doctor"><ComingSoon label="Doctor Profile" /></Guard>} />
+        <Route path="/doctor/profile" element={<Guard role="doctor"><DoctorProfile /></Guard>} />
 
       
         <Route path="*" element={<Navigate to="/" replace />} />

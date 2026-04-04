@@ -394,7 +394,7 @@ function Ctrl({ icon, label, active, onClick }) {
       cursor:'pointer', fontSize:'1.18rem', gap:2,
       transition:'all 0.18s ease',
       boxShadow: active ? '0 0 0 2px rgba(200,66,109,0.5)' : 'none',
-    }}>
+    }}> 
       {icon}
       <span style={{
         color:'rgba(255,255,255,0.5)',
