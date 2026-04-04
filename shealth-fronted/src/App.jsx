@@ -13,7 +13,10 @@ import PatientHome    from './pages/PatientHome';
 import AssessmentPage from './pages/AssessmentPage';
 import ReportPage     from './pages/ReportPage';
 import VideoCallPage  from './pages/VideoCallPage';
+import WHFDashboard from './pages/WHFDashboard';
+import VitalsPage   from './pages/VitalsPage';
 
+import WHFProfile   from './pages/WHFProfile';
 
 
 function Guard({ children, role: need }) {
@@ -84,12 +87,11 @@ function Shell() {
         <Route path="/patient/profile"     element={<Guard role="patient"><ComingSoon label="Profile" /></Guard>} />
 
       
-        <Route path="/whf"          element={<Guard role="whf"><ComingSoon label="WHF Dashboard" /></Guard>} />
-        <Route path="/whf/vitals"   element={<Guard role="whf"><ComingSoon label="Vitals Recording" /></Guard>} />
-        <Route path="/whf/earnings" element={<Guard role="whf"><ComingSoon label="Earnings" /></Guard>} />
-        <Route path="/whf/profile"  element={<Guard role="whf"><ComingSoon label="WHF Profile" /></Guard>} />
+        <Route path="/whf"          element={<Guard role="whf"><WHFDashboard /></Guard>} />
+        <Route path="/whf/vitals"   element={<Guard role="whf"><VitalsPage /></Guard>} />
+        
+        <Route path="/whf/profile"  element={<Guard role="whf"><WHFProfile /></Guard>} />
 
-      
         <Route path="/doctor"            element={<Guard role="doctor"><ComingSoon label="Doctor Queue" /></Guard>} />
         <Route path="/doctor/ai-report"  element={<Guard role="doctor"><ComingSoon label="AI Report" /></Guard>} />
         <Route path="/doctor/video-call" element={<Guard role="doctor"><ComingSoon label="Video Call" /></Guard>} />
