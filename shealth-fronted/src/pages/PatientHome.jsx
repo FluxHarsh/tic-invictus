@@ -20,9 +20,9 @@ const TODAY_IDX = 1; // Saturday highlighted
 export function BottomNav({ active, onSelect, navigate, role }) {
   const patientTabs = [
     { id: 'home',    emoji: '🏠', label: 'Home',    path: '/patient'          },
-    { id: 'health',  emoji: '📊', label: 'Health',  path: null                },
-    { id: 'learn',   emoji: '📚', label: 'Learn',   path: null                },
-    { id: 'profile', emoji: '👤', label: 'Profile', path: null                },
+    { id: 'health',  emoji: '📊', label: 'Health',  path: '/patient/results'  },
+    { id: 'learn',   emoji: '📚', label: 'Learn',   path: '/patient/learn'    },
+    { id: 'profile', emoji: '👤', label: 'Profile', path: '/patient/profile'  },
   ];
   const whfTabs = [
     { id: 'home',     emoji: '🏠', label: 'Home',     path: '/whf'          },
@@ -46,16 +46,13 @@ export function BottomNav({ active, onSelect, navigate, role }) {
       {tabs.map(t => (
         <button
           key={t.id}
-          onClick={() => {
-            onSelect(t.id);
-            if (t.path) navigate(t.path);
-          }}
+          onClick={() => { onSelect(t.id); navigate(t.path); }}
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
             padding: '8px 14px', borderRadius: 14, border: 'none',
             background: active === t.id ? 'rgba(200,66,109,0.10)' : 'transparent',
             color:      active === t.id ? '#C8426D' : '#9A7A88',
-            cursor: t.path ? 'pointer' : 'default', transition: 'all 0.2s ease',
+            cursor: 'pointer', transition: 'all 0.2s ease',
             fontFamily: 'Nunito, sans-serif', fontSize: '0.68rem', fontWeight: 700,
           }}
         >
@@ -188,9 +185,59 @@ export default function PatientHome() {
         </div>
       </div>
 
+      {/* ── HERO: Start AI Assessment ── */}
+      <div
+        onClick={() => navigate('/patient/assessment')}
+        style={{
+          margin:'14px 20px 0', borderRadius:26,
+          background:'linear-gradient(135deg,#C8426D 0%,#9E2F52 55%,#8B72C8 100%)',
+          padding:'20px 22px',
+          display:'flex', alignItems:'center', justifyContent:'space-between',
+          cursor:'pointer',
+          boxShadow:'0 8px 28px rgba(200,66,109,0.45)',
+          animation:'fadeUp 0.4s ease',
+          position:'relative', overflow:'hidden',
+        }}
+      >
+        {/* glow orb */}
+        <div style={{
+          position:'absolute', right:-30, top:-30, width:120, height:120,
+          borderRadius:'50%',
+          background:'radial-gradient(circle,rgba(255,255,255,0.18) 0%,transparent 70%)',
+          pointerEvents:'none',
+        }}/>
+        <div>
+          <div style={{
+            display:'inline-flex', alignItems:'center', gap:6,
+            background:'rgba(255,255,255,0.18)', borderRadius:9999,
+            padding:'3px 10px', marginBottom:8,
+          }}>
+            <span style={{ width:7, height:7, borderRadius:'50%', background:'#7FFFD4', display:'inline-block' }}/>
+            <span style={{ color:'rgba(255,255,255,0.9)', fontSize:'0.7rem', fontWeight:700, letterSpacing:'0.04em' }}>
+              AI POWERED
+            </span>
+          </div>
+          <div style={{
+            fontFamily:'Cormorant Garamond,serif',
+            fontSize:'1.55rem', fontWeight:700, color:'white', lineHeight:1.15, marginBottom:6,
+          }}>
+            Start AI Health<br />Assessment
+          </div>
+          <div style={{
+            display:'flex', alignItems:'center', gap:6,
+            background:'rgba(255,255,255,0.22)', borderRadius:9999,
+            padding:'7px 16px', width:'fit-content',
+          }}>
+            <span style={{ color:'white', fontWeight:800, fontSize:'0.88rem' }}>Begin now</span>
+            <span style={{ color:'white', fontSize:'0.9rem' }}>→</span>
+          </div>
+        </div>
+        <div style={{ fontSize:'3.2rem', filter:'drop-shadow(0 4px 8px rgba(0,0,0,0.22))' }}>🩺</div>
+      </div>
+
       
       <div style={{
-        margin:'10px 20px', padding:'22px',
+        margin:'12px 20px', padding:'22px',
         borderRadius:26,
         background:'linear-gradient(135deg,rgba(201,184,232,0.62),rgba(247,213,224,0.62))',
         backdropFilter:'blur(12px)',
@@ -282,12 +329,12 @@ export default function PatientHome() {
           <QuickCard
             icon="💊" title="Health Tips" subtitle="3 tips today"
             color="#E8F8F2" accent="#4CAF85"
-            onClick={() => {}}
+            onClick={() => navigate('/patient/learn')}
           />
           <QuickCard
             icon="🧠" title="Mental Wellness" subtitle="Check in"
             color="#FEF0F5" accent="#C8426D"
-            onClick={() => {}}
+            onClick={() => navigate('/patient/learn')}
           />
         </div>
 

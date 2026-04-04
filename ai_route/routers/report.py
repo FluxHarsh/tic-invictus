@@ -13,8 +13,9 @@ async def generate_report(req: ReportRequest):
     """Generates structured JSON pre-consultation report."""
     try:
         report = await report_chain.ainvoke({
-            "qa_text":     format_qa(req.qa),
-            "vitals_text": format_vitals(req.vitals),
+            "qa_text":       format_qa(req.qa),
+            "vitals_text":   format_vitals(req.vitals),
+            "image_context": "No image provided.",
         })
         return {"success": True, "report": report}
     except Exception as e:
@@ -25,32 +26,10 @@ async def generate_report(req: ReportRequest):
 async def generate_pdf(req: ReportRequest):
     """Generates and returns a downloadable PDF of the health report."""
     try:
-        # Get JSON report first
-        report = await report_chain.ainvoke({
-            "qa_text":     format_qa(req.qa),
-            "vitals_text": format_vitals(req.vitals),
-        })
-        # Build PDF
-        buffer = build_pdf(req, report)
-        return StreamingResponse(
-            buffer,
-            media_type="application/pdf",
-            headers={
-                "Content-Disposition": f"attachment; filename=shealth_{req.assessmentId}.pdf"
-            },
-        )
-    except Exception as e:
-        raise HTTPException(500, f"PDF generation error: {str(e)}")
-
-
-@router.post("/generate-pdf")
-async def generate_pdf(req: ReportRequest):
-    """Generates and returns a downloadable PDF of the health report."""
-    try:
         report = await report_chain.ainvoke({
             "qa_text":       format_qa(req.qa),
             "vitals_text":   format_vitals(req.vitals),
-            "image_context": req.imageContext or "No image provided.",
+            "image_context": getattr(req, 'imageContext', None) or "No image provided.",
         })
         buffer = build_pdf(req, report)
         return StreamingResponse(
@@ -62,5 +41,3 @@ async def generate_pdf(req: ReportRequest):
         )
     except Exception as e:
         raise HTTPException(500, f"PDF generation error: {str(e)}")
-    
-    

@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { sendOTP, verifyOTP } from '../services/api';
 
 
 const ROLES = [
@@ -62,11 +62,18 @@ export default function LoginPage() {
     if (!selectedRole) { addNotification('Please select your role first 👆'); return; }
     if (phone.length < 10) { addNotification('Enter a valid 10-digit number'); return; }
     setLoading(true);
-    
-    await new Promise(r => setTimeout(r, 750));   // simulated delay
-    setLoading(false);
-    setStep('otp');
-    addNotification('OTP sent! Use 123456 for demo 🌸');
+    try {
+      await sendOTP(phone, selectedRole, selectedRole);
+      setStep('otp');
+      addNotification('OTP sent! Use 1234 for demo 🌸');
+    } catch (err) {
+
+      console.warn('Backend not reachable — demo mode:', err.message);
+      setStep('otp');
+      addNotification('Demo mode: Use 123456 🌸');
+    } finally {
+      setLoading(false);
+    }
   };
 
   
@@ -92,19 +99,26 @@ export default function LoginPage() {
     setLoading(true);
     setOtpError('');
     try {
-      
-      
-      await new Promise(r => setTimeout(r, 700));
-      if (code !== DEMO_OTP) {
-        setOtpError(`Wrong code — demo OTP is ${DEMO_OTP}`);
-        setLoading(false);
-        return;
-      }
-      login({ name: ROLE_NAMES[selectedRole], phone, role: selectedRole }, selectedRole);
-      navigate(ROLE_ROUTES[selectedRole], { replace: true });
+
+      const res = await verifyOTP(phone, code);
+      localStorage.setItem('shealth_token', res.token);
+      login(res.user, res.user.role);
+      navigate(ROLE_ROUTES[res.user.role], { replace: true });
     } catch (err) {
-      setOtpError(err.message || 'Verification failed. Try again.');
-      setLoading(false);
+
+      if (err.message.includes('fetch') || err.message.includes('Failed')) {
+
+        if (code !== DEMO_OTP) {
+          setOtpError(`Wrong code — demo OTP is ${DEMO_OTP}`);
+          setLoading(false);
+          return;
+        }
+        login({ name: ROLE_NAMES[selectedRole], phone, role: selectedRole }, selectedRole);
+        navigate(ROLE_ROUTES[selectedRole], { replace: true });
+      } else {
+        setOtpError(err.message || 'Verification failed. Try again.');
+        setLoading(false);
+      }
     }
   };
 
@@ -221,7 +235,7 @@ export default function LoginPage() {
               cursor: filled < 6 || loading ? 'not-allowed' : 'pointer',
               boxShadow: filled >= 6 ? '0 4px 20px rgba(91,77,142,0.4)' : 'none',
               transition: 'all 0.22s ease', marginBottom: 14,
-            }} 
+            }}
           >
             {loading ? 'Verifying…' : 'Verify & Continue'}
           </button>
