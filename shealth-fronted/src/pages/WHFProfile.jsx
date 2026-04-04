@@ -276,7 +276,7 @@ export default function WHFProfile() {
         {[
           ['🏠', 'Home',     '/whf'         ],
           ['💓', 'Vitals',   '/whf/vitals'  ],
-          ['💰', 'Earnings', '/whf/earnings'],
+          // ['💰', 'Earnings', '/whf/earnings'],
           ['👤', 'Profile',  null           ],
         ].map(([em, lbl, path]) => (
           <button

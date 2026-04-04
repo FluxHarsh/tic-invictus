@@ -27,7 +27,7 @@ export function BottomNav({ active, onSelect, navigate, role }) {
   const whfTabs = [
     { id: 'home',     emoji: '🏠', label: 'Home',     path: '/whf'          },
     { id: 'patients', emoji: '👩', label: 'Patients', path: '/whf'          },
-    { id: 'earnings', emoji: '💰', label: 'Earnings', path: '/whf/earnings' },
+    // { id: 'earnings', emoji: '💰', label: 'Earnings', path: '/whf/earnings' },
     { id: 'profile',  emoji: '👤', label: 'Profile',  path: '/whf/profile'  },
   ];
   const doctorTabs = [

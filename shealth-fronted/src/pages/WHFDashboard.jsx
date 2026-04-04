@@ -246,7 +246,7 @@ export default function WHFDashboard() {
 
       
         <div
-          onClick={() => navigate('/whf/earnings')}
+          // onClick={() => navigate('/whf/earnings')}
           style={{
             marginTop:16, padding:'16px 18px',
             background:'linear-gradient(135deg,#4CAF85,#2E8B6A)',
