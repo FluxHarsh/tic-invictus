@@ -1,5 +1,4 @@
 // routes/diagnostics.routes.js — Mounted at /api/diagnostics
-// ════════════════════════════════════════════════════════
 const router = require('express').Router();
 
 const { protect, authorize } = require('../middleware/auth');

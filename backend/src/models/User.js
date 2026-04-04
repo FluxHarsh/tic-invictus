@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
     district: { type: String, trim: true },
     state: { type: String, trim: true, default: 'Madhya Pradesh' },
 
-    // Optional password for WHF and Doctor (patients use OTP only)
+
     passwordHash: { type: String, select: false }, 
 
     isActive: { type: Boolean, default: true },
@@ -52,8 +52,6 @@ const userSchema = new mongoose.Schema(
 );
 
 
-// Called as: user.comparePassword('plaintext')
-// Returns true/false
 userSchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.passwordHash) return false;
   return bcrypt.compare(candidatePassword, this.passwordHash);

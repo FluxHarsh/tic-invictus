@@ -3,13 +3,12 @@ const Assessment = require('../models/Assessment.js');
 const Diagnostic = require('../models/Diagnostic');
 const Slot = require('../models/Slot');
 
-// ─── POST /api/consult/book ───────────────────────────────────────────────────
+//  POST /api/consult/book 
 
 const bookConsultation = async (req, res, next) => {
   try {
     const { assessmentId, doctorId, scheduledAt } = req.body;
 
-    // Verify assessment exists and belongs to this patient
     const assessment = await Assessment.findById(assessmentId);
     if (!assessment) {
       return res.status(404).json({ success: false, message: 'Assessment not found.' });
@@ -21,17 +20,17 @@ const bookConsultation = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Consultation already booked for this assessment.' });
     }
 
-    // Create consultation
+
     const consultation = await Consultation.create({
       patient: assessment.patient,
       doctor: doctorId,
       assessment: assessmentId,
-      scheduledAt: scheduledAt || new Date(Date.now() + 30 * 60 * 1000), // Default: 30 min from now
+      scheduledAt: scheduledAt || new Date(Date.now() + 30 * 60 * 1000), 
       // Jitsi room name: unique per consultation
       jitsiRoomName: `shealth-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     });
 
-    // Link assessment back to consultation
+
     assessment.consultation = consultation._id;
     await assessment.save();
 
@@ -52,11 +51,11 @@ const bookConsultation = async (req, res, next) => {
   }
 };
 
-// ─── GET /api/consult/queue ───────────────────────────────────────────────────
-// Doctor's pending consultation queue — sorted by urgency then time
+//  GET /api/consult/queue 
+
 const getDoctorQueue = async (req, res, next) => {
   try {
-    // Only doctors can access this
+
     const consultations = await Consultation.find({
       doctor: req.user._id,
       status: { $in: ['scheduled', 'ongoing'] },
@@ -66,9 +65,9 @@ const getDoctorQueue = async (req, res, next) => {
         path: 'assessment',
         select: 'report.urgencyLevel report.symptomsSummary report.severity vitalsSnapshot',
       })
-      .sort({ scheduledAt: 1 }); // Earliest first, then we sort by urgency below
+      .sort({ scheduledAt: 1 }); 
 
-    // Sort: urgent first, then priority, then routine
+
     const urgencyOrder = { urgent: 0, priority: 1, routine: 2 };
     consultations.sort((a, b) => {
       const aUrgency = a.assessment?.report?.urgencyLevel || 'routine';
@@ -76,7 +75,7 @@ const getDoctorQueue = async (req, res, next) => {
       return urgencyOrder[aUrgency] - urgencyOrder[bUrgency];
     });
 
-    // Add urgency badge info for each entry
+
     const queue = consultations.map(c => ({
       id: c._id,
       patient: c.patient,
@@ -95,8 +94,7 @@ const getDoctorQueue = async (req, res, next) => {
   }
 };
 
-// ─── GET /api/consult/:id ─────────────────────────────────────────────────────
-// Full consultation detail — doctor uses this before joining the call
+//  GET /api/consult/:id 
 const getConsultation = async (req, res, next) => {
   try {
     const consultation = await Consultation.findById(req.params.id)
@@ -121,8 +119,8 @@ const getConsultation = async (req, res, next) => {
   }
 };
 
-// ─── PATCH /api/consult/:id/start ─────────────────────────────────────────────
-// Called when either party clicks "Join Call"
+//  PATCH /api/consult/:id/start 
+
 const startCall = async (req, res, next) => {
   try {
     const consultation = await Consultation.findById(req.params.id);
@@ -144,8 +142,8 @@ const startCall = async (req, res, next) => {
   }
 };
 
-// ─── PATCH /api/consult/:id/end ───────────────────────────────────────────────
-// Called when doctor ends the call
+//  PATCH /api/consult/:id/end 
+
 const endCall = async (req, res, next) => {
   try {
     const consultation = await Consultation.findById(req.params.id);
@@ -173,8 +171,8 @@ const endCall = async (req, res, next) => {
   }
 };
 
-// ─── PATCH /api/consult/:id/notes ─────────────────────────────────────────────
-// Doctor submits post-call: diagnosis, prescription, ordered tests
+//  PATCH /api/consult/:id/notes 
+
 const submitDoctorNotes = async (req, res, next) => {
   try {
     const { diagnosis, prescription, testsOrdered, followUpDate, followUpNotes, referral } = req.body;
@@ -184,7 +182,7 @@ const submitDoctorNotes = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Not found.' });
     }
 
-    // Only the assigned doctor can submit notes
+
     if (consultation.doctor.toString() !== req.user._id.toString()) {
       return res.status(403).json({ success: false, message: 'Only the assigned doctor can submit notes.' });
     }
@@ -198,17 +196,17 @@ const submitDoctorNotes = async (req, res, next) => {
       referral: referral || { needed: false },
     };
 
-    // If tests were ordered, create Diagnostic records and schedule EV pickup
+
     if (testsOrdered && testsOrdered.length > 0) {
       const diagnostic = await Diagnostic.create({
         patient: consultation.patient,
         orderedBy: req.user._id,
         consultation: consultation._id,
         testsOrdered: testsOrdered.map(name => ({ name, priority: 'routine' })),
-        expectedResultBy: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+        expectedResultBy: new Date(Date.now() + 24 * 60 * 60 * 1000), 
       });
 
-      // Try to auto-book the next available EV slot for patient's village
+
       await autoBookEVSlot(consultation.patient, diagnostic._id);
     }
 
@@ -224,7 +222,7 @@ const submitDoctorNotes = async (req, res, next) => {
   }
 };
 
-// ─── POST /api/consult/:id/feedback ──────────────────────────────────────────
+//  POST /api/consult/:id/feedback 
 const submitFeedback = async (req, res, next) => {
   try {
     const { rating, comment } = req.body;
@@ -243,7 +241,7 @@ const submitFeedback = async (req, res, next) => {
   }
 };
 
-// ─── GET /api/consult/my-history ─────────────────────────────────────────────
+//  GET /api/consult/my-history 
 const getMyConsultations = async (req, res, next) => {
   try {
     const filter = req.user.role === 'patient'
@@ -263,14 +261,13 @@ const getMyConsultations = async (req, res, next) => {
   }
 };
 
-// ─── Helper: auto-book next EV slot ──────────────────────────────────────────
 const autoBookEVSlot = async (patientId, diagnosticId) => {
   try {
     const User = require('../models/User');
     const patient = await User.findById(patientId);
     if (!patient?.village) return;
 
-    // Find next open morning collection slot in patient's village
+
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
@@ -282,7 +279,7 @@ const autoBookEVSlot = async (patientId, diagnosticId) => {
       date: { $gte: tomorrow },
     }).sort({ date: 1 });
 
-    if (!slot) return; // No slot available — WHF will manually schedule
+    if (!slot) return; 
 
     slot.bookings.push({
       patient: patientId,
@@ -296,13 +293,13 @@ const autoBookEVSlot = async (patientId, diagnosticId) => {
 
     await slot.save();
 
-    // Update diagnostic with the slot reference
+
     await Diagnostic.findByIdAndUpdate(diagnosticId, {
       'sampleCollection.slot': slot._id,
     });
   } catch (err) {
     console.warn('Auto-slot booking failed:', err.message);
-    // Non-critical — don't propagate this error
+
   }
 };
 

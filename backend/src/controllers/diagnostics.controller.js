@@ -65,7 +65,7 @@ const markCollected = async (req, res, next) => {
   }
 };
 
-// ─── PATCH /api/diagnostics/:id/result ───────────────────────────────────────
+//  PATCH /api/diagnostics/:id/result 
 
 const uploadResult = async (req, res, next) => {
   try {
@@ -101,8 +101,8 @@ const uploadResult = async (req, res, next) => {
   }
 };
 
-// ─── PATCH /api/diagnostics/:id/review ───────────────────────────────────────
-// Doctor reviews result and writes notes
+//  PATCH /api/diagnostics/:id/review 
+
 const reviewResult = async (req, res, next) => {
   try {
     const { notes, actionTaken } = req.body;
