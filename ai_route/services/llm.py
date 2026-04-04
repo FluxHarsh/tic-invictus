@@ -3,14 +3,14 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from config import GEMINI_API_KEY
 
-# ── LLM ──────────────────────────────────────────────────────────────────────
+
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     google_api_key=GEMINI_API_KEY,
     temperature=0.3,
 )
 
-# ── Prompts ───────────────────────────────────────────────────────────────────
+
 
 FIRST_Q_PROMPT = ChatPromptTemplate.from_messages([
     ("system", """You are a compassionate AI health assistant for rural Indian patients.
@@ -63,16 +63,15 @@ Respond ONLY with valid JSON:
 
 Rules:
 - Do NOT diagnose. Use "pattern consistent with", "may suggest"
-- keyObservations: 3-5 points from Q&A
+- keyObservations: 3-5 points from Q&A + image findings if available
 - possibleConcerns: non-diagnostic only (e.g. "Low hemoglobin pattern")
 - urgencyLevel: urgent=alarming symptoms, priority=needs soon, routine=otherwise"""),
-    ("human", "Patient Q&A:\n{qa_text}\n\nVitals:\n{vitals_text}\n\nGenerate report."),
+    ("human", "Patient Q&A:\n{qa_text}\n\nVitals:\n{vitals_text}\n\nImage Findings (if any):\n{image_context}\n\nGenerate report."),
 ])
 
-# ── Chains ────────────────────────────────────────────────────────────────────
+
 parser = JsonOutputParser()
 
 first_question_chain = FIRST_Q_PROMPT | llm | parser
 next_question_chain  = NEXT_Q_PROMPT  | llm | parser
 report_chain         = REPORT_PROMPT  | llm | parser
-
